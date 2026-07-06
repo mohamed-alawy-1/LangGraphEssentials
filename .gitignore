@@ -1,0 +1,25 @@
+# LangGraph Essentials Ignore Files
+
+# Python & Jupyter temp files
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Virtual Environments & Packages
+.venv/
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+
+# User requested exclusion (modified in future steps)
+L3-L4_cedges_memory.ipynb
+L5_interrupt.ipynb
+L6_EmailAgent.ipynb
+
+# IDE / Editor configuration
+.vscode/
+.idea/

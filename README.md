@@ -4,10 +4,10 @@ A simple repository covering the fundamentals of building AI Agents and workflow
 
 ## 📂 Project Structure
 
-* **`nodes.ipynb` / `nodes.py`**
-* **`edges.ipynb` / `edges.py`**
-* **`nodes.png` / `edges.png`**
-* **`requirements.txt`**
+* **`notebooks/`**: Contain the Jupyter notebooks (`nodes.ipynb`, `edges.ipynb`, along with ignored labs).
+* **`src/`**: Contains execution scripts (`nodes.py`, `edges.py`).
+* **`assets/`**: Images and diagrams (`nodes.png`, `edges.png`).
+* **`requirements.txt`**: Package dependencies.
 
 ---
 
@@ -19,7 +19,7 @@ A simple repository covering the fundamentals of building AI Agents and workflow
 * **Linear Flow**: Direct routing from one node sequentially to another (`START -> Node -> END`).
 
 ### Graph Flowchart:
-![States & Nodes Graph](nodes.png)
+![States & Nodes Graph](assets/nodes.png)
 
 ---
 
@@ -30,7 +30,7 @@ A simple repository covering the fundamentals of building AI Agents and workflow
 * **Reducers**: Functions (like `operator.concat`) used to specify how state updates from concurrent paths are merged over time instead of overwriting each other.
 
 ### Graph Flowchart:
-![Parallel Edges Graph](edges.png)
+![Parallel Edges Graph](assets/edges.png)
 
 ---
 

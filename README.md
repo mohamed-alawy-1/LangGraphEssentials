@@ -4,9 +4,25 @@ A simple repository covering the fundamentals of building AI Agents and workflow
 
 ## 📂 Project Structure
 
-* **`notebooks/`**: Contain the Jupyter notebooks (`nodes.ipynb`, `edges.ipynb`, along with ignored labs).
-* **`src/`**: Contains execution scripts (`nodes.py`, `edges.py`).
-* **`assets/`**: Images and diagrams (`nodes.png`, `edges.png`).
+* **`notebooks/`**: Contains the Jupyter notebooks demonstrating the concepts interactively:
+  * [notebooks/nodes.ipynb](notebooks/nodes.ipynb)
+  * [notebooks/edges.ipynb](notebooks/edges.ipynb)
+  * [notebooks/conditional_edges.ipynb](notebooks/conditional_edges.ipynb)
+  * [notebooks/memory.ipynb](notebooks/memory.ipynb)
+  * [notebooks/interrupt.ipynb](notebooks/interrupt.ipynb)
+* **`src/`**: Contains clean, structured python execution scripts representing key lessons:
+  * [src/nodes.py](src/nodes.py)
+  * [src/edges.py](src/edges.py)
+  * [src/conditional_edges.py](src/conditional_edges.py)
+  * [src/memory.py](src/memory.py)
+  * [src/interrupt.py](src/interrupt.py)
+* **`assets/`**: Flowcharts and architecture diagrams for the workflows:
+  * [assets/nodes.png](assets/nodes.png)
+  * [assets/edges.png](assets/edges.png)
+  * [assets/conditional_edges.png](assets/conditional_edges.png)
+  * [assets/Memory.png](assets/Memory.png)
+  * [assets/intrrupt.png](assets/intrrupt.png)
+  * [assets/HITL.png](assets/HITL.png)
 * **`requirements.txt`**: Package dependencies.
 
 ---
@@ -31,6 +47,39 @@ A simple repository covering the fundamentals of building AI Agents and workflow
 
 ### Graph Flowchart:
 ![Parallel Edges Graph](assets/edges.png)
+
+---
+
+## 💡 Lesson 3: Conditional Edges & Routing
+
+### Key Takeaways:
+* **Dynamic Routing**: Deciding the next node(s) to visit dynamically at runtime.
+* **`Command` Object**: By returning a `Command` object, a node can update the state and declare the target transition path dynamically using routing parameters like `goto`.
+
+### Graph Flowchart:
+![Conditional Edges Graph](assets/conditional_edges.png)
+
+---
+
+## 💡 Lesson 4: State Persistence (Memory)
+
+### Key Takeaways:
+* **Checkpointers**: InMemorySaver simulates a database saving checkpoints of the state at each step of graph execution.
+* **Thread Configuration Matched Sessions**: Supplying a `thread_id` allows retrieval, resumption, and persistence of conversation history across different invocation requests.
+
+### Graph Flowchart:
+![State Persistence Graph](assets/Memory.png)
+
+---
+
+## 💡 Lesson 5: Human-In-The-Loop & Interrupts
+
+### Key Takeaways:
+* **`interrupt()` Helper**: Pauses graph execution during specific logic verification to ask for human confirmation or input, raising structured queries.
+* **Resuming interrupted flows**: Passing a resume Command (via `Command(resume=...)`) re-triggers workflow completion from the exact step where execution halted.
+
+### Graph Flowcharts & Diagrams:
+![Human-In-The-Loop Concept](assets/HITL.png)
 
 ---
 

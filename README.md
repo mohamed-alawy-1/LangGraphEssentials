@@ -10,12 +10,14 @@ A simple repository covering the fundamentals of building AI Agents and workflow
   * [notebooks/conditional_edges.ipynb](notebooks/conditional_edges.ipynb)
   * [notebooks/memory.ipynb](notebooks/memory.ipynb)
   * [notebooks/interrupt.ipynb](notebooks/interrupt.ipynb)
+  * [notebooks/EmailAgent.ipynb](notebooks/EmailAgent.ipynb)
 * **`src/`**: Contains clean, structured python execution scripts representing key lessons:
   * [src/nodes.py](src/nodes.py)
   * [src/edges.py](src/edges.py)
   * [src/conditional_edges.py](src/conditional_edges.py)
   * [src/memory.py](src/memory.py)
   * [src/interrupt.py](src/interrupt.py)
+  * [src/email_agent.py](src/email_agent.py)
 * **`assets/`**: Flowcharts and architecture diagrams for the workflows:
   * [assets/nodes.png](assets/nodes.png)
   * [assets/edges.png](assets/edges.png)
@@ -23,6 +25,7 @@ A simple repository covering the fundamentals of building AI Agents and workflow
   * [assets/Memory.png](assets/Memory.png)
   * [assets/intrrupt.png](assets/intrrupt.png)
   * [assets/HITL.png](assets/HITL.png)
+  * [assets/email_agent.png](assets/email_agent.png)
 * **`requirements.txt`**: Package dependencies.
 
 ---
@@ -80,6 +83,20 @@ A simple repository covering the fundamentals of building AI Agents and workflow
 
 ### Graph Flowcharts & Diagrams:
 ![Human-In-The-Loop Concept](assets/HITL.png)
+
+---
+
+## 💡 Lesson 6: Email Classifier & Response Agent (Capstone Project)
+
+An end-to-end practical application combining classification, document reference lookup (RAG simulation), drafting, and interactive Human-in-the-Loop approval workflows.
+
+### Key Takeaways:
+* **Structured Outputs**: Leveraging `llm.with_structured_output` to parse unstructured email bodies into predefined JSON classification parameters (spam categorization, urgency labels, confidence scoring).
+* **Advanced Conditional Routing**: Checking fields dynamically inside the draft node to route emails through approval buffers based on evaluation heuristics (e.g., spam flagged or critical urgency).
+* **State Resumption Logic**: Resuming execution safely from deep nested branches inside `InMemorySaver` memory checkpoints by submitting a `Command(resume=...)` response to the underlying runner.
+
+### Graph Flowchart:
+![Email Agent Workflow](assets/email_agent.png)
 
 ---
 

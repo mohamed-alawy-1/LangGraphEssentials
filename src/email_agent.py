@@ -6,10 +6,10 @@ from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
+from langsmith import Client
 
 # Load environment variables
-load_dotenv()
-
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 # Define structural TypeDict schemas for the Email Classification details
 class EmailClassification(TypedDict):
@@ -31,10 +31,26 @@ class EmailAgentState(TypedDict):
 
 
 # Initialize the LLM client (using ChatOpenAI configured via environment variables)
+api_key=os.getenv("OPENAI_API_KEY")
+
 llm = ChatOpenAI(
     model="gemini-2.5-flash-lite",
     base_url=os.getenv("OPENAI_API_BASE"),
-    api_key=os.getenv("OPENAI_API_KEY"),
+    api_key=api_key,
+)
+
+# Initialize LangSmith client for tracing and logging
+client = Client()
+classification_prompt = client.pull_prompt(
+    "email_classifier",
+    include_model=True,
+    secrets={"OPENAI_API_KEY": api_key}
+)
+
+draft_prompt = client.pull_prompt(
+    "draft_prompt",
+    include_model=True,
+    secrets={"OPENAI_API_KEY": api_key}
 )
 
 
@@ -45,27 +61,33 @@ def read_email_content(state: EmailAgentState) -> EmailAgentState:
 
 def classify_email(state: EmailAgentState) -> EmailAgentState:
     """Analyses and classifies email metadata & content using the LLM with structured output."""
-    structured_llm = llm.with_structured_output(EmailClassification, method="json_mode")
-    classification_prompt = f"""
-You are an email classification agent. Your task is to classify the following email content into a category (spam or ham),
-determine its urgency level (low, medium, high, critical), and provide a confidence score (between 0 and 1). Additionally,
-identify the main topic of the email and provide a brief summary.
+    # structured_llm = llm.with_structured_output(EmailClassification, method="json_mode")
+#     classification_prompt = f"""
+# You are an email classification agent. Your task is to classify the following email content into a category (spam or ham),
+# determine its urgency level (low, medium, high, critical), and provide a confidence score (between 0 and 1).and provide a brief summary.
 
-Email Content: {state['email_content']}
-Email Subject: {state['email_subject']}
-Email Sender: {state['email_sender']}
-From: {state['email_sender']}
+# Email Content: {state['email_content']}
+# Email Subject: {state['email_subject']}
+# From: {state['email_sender']}
 
-Please provide the output in the following JSON format:
+# Please provide the output in the following JSON format:
 
-{{
-    "category": "spam or ham",
-    "urgency": "low, medium, high, critical",
-    "confidence": 0.0,
-    "summary": "brief summary of the email"
-}}
-"""
-    classification = structured_llm.invoke(classification_prompt)
+# {{
+#     "category": "spam or ham",
+#     "urgency": "low, medium, high, critical",
+#     "confidence": 0.0,
+#     "summary": "brief summary of the email"
+# }}
+# """
+    # classification = structured_llm.invoke(classification_prompt)
+
+    classification = classification_prompt.invoke(
+        {
+            "email_content": state['email_content'], 
+            "email_subject": state['email_subject'], 
+            "email_sender": state['email_sender']
+         }
+    )
     state["classification"] = classification
     return state
 
@@ -87,19 +109,28 @@ def write_draft_response(state: EmailAgentState) -> Command[Literal["review_draf
     classification = state.get("classification") or {}
     search_results = state.get("search_results") or []
 
-    draft_prompt = f"""
-You are an email response agent. Based on the following email content, its classification, and the search results,
-please draft a professional response to the email.
+#     draft_prompt = f"""
+# You are an email response agent. Based on the following email content, its classification, and the search results,
+# please draft a professional response to the email.
 
-Email Content: {state['email_content']}
-Classification: {classification.get('category', 'N/A')}
-urgency: {classification.get('urgency', 'medium')}
-Search Results: {search_results}
+# Email Content: {state['email_content']}
+# Classification: {classification.get('category', 'N/A')}
+# urgency: {classification.get('urgency', 'medium')}
+# Search Results: {search_results}
 
-Please provide a concise and professional draft response. Do NOT include any "Subject:" line, headers, salutations to headers, or subject lines in your draft response. Just output the body of the email reply directly.
-"""
-    draft_response = llm.invoke(draft_prompt)
+# Please provide a concise and professional draft response. Do NOT include any "Subject:" line, headers, salutations to headers, or subject lines in your draft response. Just output the body of the email reply directly.
+# """
+#     draft_response = llm.invoke(draft_prompt)
 
+    draft_response = draft_prompt.invoke(
+        {
+            "email_content": state['email_content'], 
+            "category": classification.get("category", "N/A"),
+            "urgency": classification.get("urgency", "medium"),
+            "search_results": search_results
+         }
+    )
+    
     # Human interaction criteria: Require review if spam OR high/critical urgency
     needs_review = (
         classification.get("urgency") in ["high", "critical"]

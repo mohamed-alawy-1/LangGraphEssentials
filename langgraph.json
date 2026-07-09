@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "email_agent": "./src/email_agent.py:app"
+  },
+  "env": ".env"
+}

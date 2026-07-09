@@ -206,10 +206,10 @@ def build_graph(checkpointer: InMemorySaver) -> StateGraph:
     # Compile with memory checkpoint capability to support thread interrupts
     return builder.compile(checkpointer=checkpointer)
 
+app = build_graph(checkpointer=None)
 
 if __name__ == "__main__":
     memory = InMemorySaver()
-    app = build_graph(checkpointer=memory)
 
     # Set of test emails to showcase regular execution and interrupt-handling
     test_emails = [
